@@ -1,36 +1,36 @@
+import { useState, useEffect } from 'react/cjs/react.development';
+import useHttpRequest from '../../hooks/use-http-request';
 import Card from '../UI/Card';
 import classes from './AvailableMeals.module.css';
 import MealItem from './MealItem/MealItem';
 
-const DUMMY_MEALS = [
-  {
-    id: 'm1',
-    name: 'Sushi',
-    description: 'Finest fish and veggies',
-    price: 22.99,
-  },
-  {
-    id: 'm2',
-    name: 'Schnitzel',
-    description: 'A german specialty!',
-    price: 16.5,
-  },
-  {
-    id: 'm3',
-    name: 'Barbecue Burger',
-    description: 'American, raw, meaty',
-    price: 12.99,
-  },
-  {
-    id: 'm4',
-    name: 'Green Bowl',
-    description: 'Healthy...and green...',
-    price: 18.99,
-  },
-];
-
 const AvailableMeals = () => {
-  const mealsList = DUMMY_MEALS.map((meal) => (
+  const [mealsArray, setMealsArray] = useState([]);
+
+  const { isLoading, error, sendRequest: fetchMeals } = useHttpRequest();
+
+  useEffect(() => {
+    const transformMeals = (mealsObj) => {
+      const loadedMeals = [];
+      for (const mealKey in mealsObj) {
+        loadedMeals.push({
+          id: mealKey,
+          description: mealsObj[mealKey].description,
+          name: mealsObj[mealKey].name,
+          price: mealsObj[mealKey].price,
+        });
+      }
+      setMealsArray(loadedMeals);
+    };
+    fetchMeals(
+      {
+        url: process.env.REACT_APP_FIREBASE_URL,
+      },
+      transformMeals
+    );
+  }, [fetchMeals]);
+
+  const mealsList = mealsArray.map((meal) => (
     <MealItem
       key={meal.id}
       id={meal.id}
