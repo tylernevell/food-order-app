@@ -30,6 +30,22 @@ const AvailableMeals = () => {
     );
   }, [fetchMeals]);
 
+  if (isLoading) {
+    return (
+      <section className={classes.MealsLoading}>
+        <p>Loading...</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className={classes.MealsError}>
+        <p>{error}</p>
+      </section>
+    );
+  }
+
   const mealsList = mealsArray.map((meal) => (
     <MealItem
       key={meal.id}
